@@ -15,7 +15,7 @@ return [
     |
     */
 
-    'default' => env('CACHE_STORE', 'database'),
+    'default' => env('CACHE_STORE', 'redis'),
 
     /*
     |--------------------------------------------------------------------------
@@ -42,7 +42,7 @@ return [
             'driver' => 'database',
             'table' => env('DB_CACHE_TABLE', 'cache'),
             'connection' => env('DB_CACHE_CONNECTION'),
-            'lock_connection' => env('DB_CACHE_LOCK_CONNECTION'),
+                        'lock_connection' => env('DB_CACHE_LOCK_CONNECTION'),
         ],
 
         'file' => [
