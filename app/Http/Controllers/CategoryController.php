@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreCategoryRequest;
 use App\Models\Category;
+use App\Services\Slug;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Symfony\Component\HttpFoundation\Response;
@@ -11,8 +12,8 @@ use Symfony\Component\HttpFoundation\Response;
 class CategoryController extends Controller {
     public function store(StoreCategoryRequest $request) {
         $fields = $request->validated();
-        $fields['posts_count'] = 0;
-        $fields['comments_count'] = 0;
+        $fields['posts_count'] = $fields['comments_count'] = 0;
+        $fields['slug'] = Slug::getUniquePostSlug($fields['title'], Category::class);
 
         $category = Category::create($fields);
 

@@ -23,6 +23,8 @@ class CategoryFactory extends Factory
             'title' => $title,
             'slug' => $slug,
             'parent_id' => null,
+            'posts_count' => 0,
+            'comments_count' => 0,
             'depth' => 0,
         ];
     }

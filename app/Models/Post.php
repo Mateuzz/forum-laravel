@@ -17,6 +17,48 @@ enum PostOrderTypes: string {
     case MostViewed = 'most-viewed';
 };
 
+/**
+ * 
+ *
+ * @mixin IdeHelperPost
+ * @property int $id
+ * @property string $title
+ * @property string $slug
+ * @property mixed $body
+ * @property string $excerpt
+ * @property int $views_count
+ * @property int $unique_views_count
+ * @property int $comments_count
+ * @property int $stars
+ * @property int|null $user_id
+ * @property int $category_id
+ * @property \Illuminate\Support\Carbon|null $created_at
+ * @property \Illuminate\Support\Carbon|null $updated_at
+ * @property string|null $search
+ * @property-read \App\Models\User|null $author
+ * @property-read \App\Models\Category $category
+ * @method static \Database\Factories\PostFactory factory($count = null, $state = [])
+ * @method static Builder|Post filtered(array $filters)
+ * @method static Builder|Post newModelQuery()
+ * @method static Builder|Post newQuery()
+ * @method static Builder|Post ordered(?string $orderMethod)
+ * @method static Builder|Post query()
+ * @method static Builder|Post whereBody($value)
+ * @method static Builder|Post whereCategoryId($value)
+ * @method static Builder|Post whereCommentsCount($value)
+ * @method static Builder|Post whereCreatedAt($value)
+ * @method static Builder|Post whereExcerpt($value)
+ * @method static Builder|Post whereId($value)
+ * @method static Builder|Post whereSearch($value)
+ * @method static Builder|Post whereSlug($value)
+ * @method static Builder|Post whereStars($value)
+ * @method static Builder|Post whereTitle($value)
+ * @method static Builder|Post whereUniqueViewsCount($value)
+ * @method static Builder|Post whereUpdatedAt($value)
+ * @method static Builder|Post whereUserId($value)
+ * @method static Builder|Post whereViewsCount($value)
+ * @mixin \Eloquent
+ */
 class Post extends Model {
     use HasFactory;
 

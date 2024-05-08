@@ -7,8 +7,10 @@ use Illuminate\Validation\ValidationException;
 use Illuminate\Http\Request;
 
 use App\Lib\LoginThrottler;
+use App\Models\User;
 use App\Services\UserStatus;
 use App\Services\UserToken;
+use Illuminate\Support\Facades\Hash;
 use Symfony\Component\HttpFoundation\Response;
 
 class LoginController extends Controller {
@@ -25,10 +27,11 @@ class LoginController extends Controller {
             ], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
-        if (auth()->attempt($fields)) {
-            $user = $request->user();
+        $user = User::whereEmail($fields['email'])
+            ->first();
+
+        if ($user && Hash::check($fields['password'], $user->password)) {
             $loginThrottler->clearFailedAttemps();
-            session()->regenerate();
 
             UserStatus::markUserOnline($user);
 
@@ -51,13 +54,13 @@ class LoginController extends Controller {
         ];
     }
 
-    public function destroy() {
-        /* auth()->logout(); */
-        session()->regenerate();
-        session()->regenerateToken();
+    /* public function destroy() { */
+    /*     /1* auth()->logout(); *1/ */
+    /*     session()->regenerate(); */
+    /*     session()->regenerateToken(); */
 
-        return response()->json([
-            'message' => "Logout sucessfully."
-        ]);
-    }
+    /*     return response()->json([ */
+    /*         'message' => "Logout sucessfully." */
+    /*     ]); */
+    /* } */
 }
