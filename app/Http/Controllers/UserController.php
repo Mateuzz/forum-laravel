@@ -19,8 +19,8 @@ class UserController extends Controller {
 
         $pagesCount = min(self::MAX_PAGES_COUNT, $validated['results-per-page'] ?? self::DEFAULT_PAGES_COUNT);
 
-        return User::ordered($validated['order'] ?? null)
-                  ->filtered($validated)
+        return User::order($validated['order'] ?? null)
+                  ->filter($validated)
                   ->paginate($pagesCount);
     }
 

@@ -18,9 +18,15 @@ return Application::configure(basePath: dirname(__DIR__))
             ->alias([
                 'update-user-activity' => UpdateLastActivityMiddleware::class,
             ])
+            /* ->remove([ */
+            /*     HandleCors::class, */
+            /* ]) */
             ->append([
-                SetUserIdentifierMiddleware::class
+                SetUserIdentifierMiddleware::class,
             ]);
+            /* ->prepend( */
+            /*     CorsMiddleware::class */
+            /*         ); */
     })
 
 

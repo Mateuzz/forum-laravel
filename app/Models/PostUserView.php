@@ -28,6 +28,7 @@ use Illuminate\Database\Eloquent\Model;
  * @method static \Illuminate\Database\Eloquent\Builder|PostUserView wherePostId($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PostUserView whereUserCookieIdentifier($value)
  * @method static \Illuminate\Database\Eloquent\Builder|PostUserView whereUserIpIdentifier($value)
+ * @method static \Database\Factories\PostUserViewFactory factory($count = null, $state = [])
  * @mixin \Eloquent
  */
 class PostUserView extends Model

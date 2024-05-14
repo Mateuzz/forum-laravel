@@ -28,10 +28,10 @@ class LoginController extends Controller {
         }
 
         $user = User::whereEmail($fields['email'])
-            ->first();
+                    ->first();
 
         if ($user && Hash::check($fields['password'], $user->password)) {
-            $loginThrottler->clearFailedAttemps();
+            $loginThrottler->reset();
 
             UserStatus::markUserOnline($user);
 

@@ -32,8 +32,10 @@ return new class extends Migration {
 
         DB::statement("alter table posts
             add column search tsvector
-                generated always as
-                    (to_tsvector('pg_catalog.simple', title || ' ' || body)) stored;
+                generated always as (
+                    setweight( to_tsvector('simple'::regconfig, title ), 'A') ||
+                    setweight( to_tsvector('simple'::regconfig, body ), 'B')
+                ) stored;
         ");
 
         DB::statement("CREATE INDEX post_search_idx ON posts USING GIN (search);");
