@@ -19,10 +19,12 @@ class RegisterController extends Controller {
 
         $fields['status'] = 'online';
         $fields['type'] = 'user';
-        $fields['donations'] =
-            $fields['posts_published'] =
-            $fields['posts_views_received'] =
-            $fields['stars_received'] = 0;
+
+        $fields['donations']
+            = $fields['posts_published']
+            = $fields['posts_views_received']
+            = $fields['stars_received'] = 0;
+
         $fields['image'] = null;
 
         $user = User::create($fields);

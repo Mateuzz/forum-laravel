@@ -16,7 +16,7 @@ use Symfony\Component\HttpFoundation\Response;
 class LoginController extends Controller {
     public function store(StoreLoginRequest $request) {
         $fields = $request->validated();
-        $key = $request->ip() . '-' . $fields['email'];
+        $key = "ip-" . $request->ip() . ".email-" . $fields['email'];
         $loginThrottler = new LoginThrottler($key, 5);
 
         if (!$loginThrottler->tryAttempt()) {
@@ -27,11 +27,12 @@ class LoginController extends Controller {
             ], Response::HTTP_TOO_MANY_REQUESTS);
         }
 
+        /** @var User | null */
         $user = User::whereEmail($fields['email'])
-            ->first();
+                    ->first();
 
         if ($user && Hash::check($fields['password'], $user->password)) {
-            $loginThrottler->clearFailedAttemps();
+            $loginThrottler->reset();
 
             UserStatus::markUserOnline($user);
 

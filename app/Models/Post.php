@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 use App\Lib\FullText;
-use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Query\Builder;
 use Illuminate\Support\Facades\DB;
 
 enum PostOrderTypes: string {
@@ -18,7 +18,7 @@ enum PostOrderTypes: string {
 };
 
 /**
- * 
+ *
  *
  * @mixin IdeHelperPost
  * @property int $id
@@ -57,6 +57,8 @@ enum PostOrderTypes: string {
  * @method static Builder|Post whereUpdatedAt($value)
  * @method static Builder|Post whereUserId($value)
  * @method static Builder|Post whereViewsCount($value)
+ * @method static Builder|Post filter(array $filters)
+ * @method static Builder|Post order(?string $orderMethod)
  * @mixin \Eloquent
  */
 class Post extends Model {
@@ -85,17 +87,20 @@ class Post extends Model {
     /*     return ['id', 'title', 'slug', 'body', 'views_count', 'comments_count', 'stars', 'user_id', 'category_id', 'created_at']; */
     /* } */
 
-    public function scopeFiltered(Builder $query, array $filters) {
+    /**
+     * @param Builder $query
+     * */
+    public function scopeFilter($query, array $filters) {
         if (isset($filters['category'])) {
             $query->whereHas('category',
-                    fn(Builder $query) =>
+                    fn($query) =>
                         $query->where('slug', '=', $filters['category'])
             );
         }
 
         if (isset($filters['user'])) {
             $query->whereHas('author',
-                    fn(Builder $query) =>
+                    fn($query) =>
                         $query->where('id', '=', $filters['user'])
             );
         }
@@ -110,7 +115,11 @@ class Post extends Model {
             switch ($driver) {
             case 'pgsql':
                 $s = FullText::transformSearch($filters['search']);
-                $query->whereRaw("search @@ to_tsquery('$s')");
+
+                    // order by title (0.1 weight) and body (1.0 weight)
+                $query->whereRaw("search @@ to_tsquery(?)", [$s])
+                      ->orderByRaw( "ts_rank(ARRAY[0, 0, 0.1, 1]::float4[], search, to_tsquery(?)) desc", [$s]);
+
                 break;
 
             default:
@@ -121,7 +130,10 @@ class Post extends Model {
         }
     }
 
-    public function scopeOrdered(Builder $query, ?string $orderMethod) {
+    /**
+     * @param Builder $query
+     * */
+    public function scopeOrder($query, ?string $orderMethod) {
         switch (PostOrderTypes::from($orderMethod ?? 'latest')) {
         case PostOrderTypes::Latest:
             $query->orderByDesc('created_at');

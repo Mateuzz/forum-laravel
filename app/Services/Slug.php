@@ -7,7 +7,7 @@ class Slug {
         return strtolower(preg_replace('/\s+/', '-', trim($title)));
     }
 
-    static public function getUniquePostSlug(string $title, string $model): string {
+    static public function createUnique(string $title, string $model): string {
         $slug = self::fromTitle($title);
         $postWithSameSlug = $model::where('slug', $slug)->first();
 

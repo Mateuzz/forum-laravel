@@ -82,6 +82,8 @@ enum UserType: string {
  * @method static Builder|User whereType($value)
  * @method static Builder|User whereUpdatedAt($value)
  * @method static Builder|User whereUsername($value)
+ * @method static Builder|User filter(array $filters)
+ * @method static Builder|User order(?string $orderMethod)
  * @mixin \Eloquent
  */
 class User extends Authenticatable {
@@ -98,7 +100,7 @@ class User extends Authenticatable {
     const MIN_USERNAME_SIZE = 3;
     const MIN_PASSWORD_SIZE = 14;
 
-    public function scopeFiltered(Builder $query, array $filters) {
+    public function scopeFilter(Builder $query, array $filters) {
         /* if (isset($filters['search'])) { */
         /*     $s = strtolower($filters['search']); */
         /*     $query->whereRaw("lower(username) like '%$s%'"); */
@@ -110,7 +112,7 @@ class User extends Authenticatable {
         }
     }
 
-    public function scopeOrdered(Builder $query, ?string $orderMethod) {
+    public function scopeOrder(Builder $query, ?string $orderMethod) {
         switch (UserOrderTypes::from($orderMethod ?? 'latest')) {
         case UserOrderTypes::Latest:
             $query->latest();

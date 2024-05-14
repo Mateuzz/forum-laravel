@@ -17,8 +17,8 @@ class Limiter {
     protected string $remainingKey;
 
     function __construct(string $key, public int $maxAttempts) {
-        $this->lockKey = "$key-locked-until";
-        $this->remainingKey = "$key-remaining";
+        $this->lockKey = "$key.locked-until";
+        $this->remainingKey = "$key.remaining";
     }
 
     protected function lock(int $duration): void {

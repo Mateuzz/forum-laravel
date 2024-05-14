@@ -13,7 +13,7 @@ class CategoryController extends Controller {
     public function store(StoreCategoryRequest $request) {
         $fields = $request->validated();
         $fields['posts_count'] = $fields['comments_count'] = 0;
-        $fields['slug'] = Slug::getUniquePostSlug($fields['title'], Category::class);
+        $fields['slug'] = Slug::createUnique($fields['title'], Category::class);
 
         $category = Category::create($fields);
 
