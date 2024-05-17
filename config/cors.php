@@ -20,7 +20,7 @@ return [
 
     'allowed_methods' => ['*'],
 
-    'allowed_origins' => ['http://vue.localhost:8080'],
+    'allowed_origins' => [getenv('CORS_URL')],
 
     'allowed_origins_patterns' => [],
 

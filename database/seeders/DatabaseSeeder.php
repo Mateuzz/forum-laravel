@@ -4,6 +4,7 @@ namespace Database\Seeders;
 
 use App\Models\Category;
 use App\Models\Post;
+use App\Models\PostUserView;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Sequence;
 use Illuminate\Database\Seeder;
@@ -18,21 +19,33 @@ class DatabaseSeeder extends Seeder {
         User::truncate();
         Category::truncate();
         Post::truncate();
+        PostUserView::truncate();
         Schema::enableForeignKeyConstraints();
 
         $users = User::factory(20)->create()->all();
-        $categories = Category::factory(3)->create();
+        $categories = Category::factory(3)->create()->all();
 
-        $subCategories = Category::factory(9)
-            ->sequence(fn(Sequence $sequence) => ['parent_id' => rand() % 3])
-            ->create(['depth' => 1, 'posts_count' => 10])
+        $postsCount = 400;
+        $subCategoriesCount = 10;
+        $postsPerCategory = $postsCount / $subCategoriesCount;
+
+        $subCategories = Category::factory($subCategoriesCount)
+            ->sequence(fn(Sequence $sequence) => ['parent_id' => $categories[array_rand($categories)]])
+            ->create(['depth' => 1, 'posts_count' => $postsPerCategory])
             ->all();
 
-        Post::factory(400)
+        $posts = Post::factory($postsCount)
             ->sequence(fn(Sequence $sequence) => [
                 'user_id' => $users[array_rand($users)],
-                'category_id' => $subCategories[array_rand($subCategories)],
+                'category_id' => $sequence->index % $subCategoriesCount + 1,
             ])
+            ->create()
+            ->all();
+
+        PostUserView::factory(200)
+            ->sequence(fn (Sequence $sequence) =>
+                ['post_id' => $posts[rand() % 100]]
+            )
             ->create();
     }
 }

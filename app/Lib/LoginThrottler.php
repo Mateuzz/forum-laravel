@@ -6,47 +6,45 @@ use Carbon\CarbonInterval;
 use Illuminate\Support\Facades\Cache;
 
 class ThrottleTimerCalculator {
-    public function __invoke(int $lockedSequenceNumber) {
-        return pow(2, $lockedSequenceNumber + 1) * 60;
+    public function __invoke(int $lockedSequenceCount) {
+        return pow(2, $lockedSequenceCount + 1) * 60;
     }
 }
 
 class LoginThrottler {
+    public ThrottleTimerCalculator $throttleTimerCalculator = new ThrottleTimerCalculator;
     protected Limiter $limiter;
     protected string $key;
-    private string $lockedSequenceKey;
+    private string $lockedSequenceCountKey;
 
-    function __construct(
-            string $key,
-            int $maxAttempts = 5,
-            public ThrottleTimerCalculator $throttleTimerCalculator = new ThrottleTimerCalculator) {
+    function __construct(string $key, int $maxAttempts = 5) {
         $this->limiter = new Limiter(key: "login-throttler-limiter-$key", maxAttempts: $maxAttempts);
         $this->key = "login-throttler-$key";
-        $this->lockedSequenceKey = "{$this->key}-locked-sequence";
+        $this->lockedSequenceCountKey = "{$this->key}-locked-sequence";
     }
 
     private function increaseThrottleTime(): void {
-        $lockedSequenceNumber = $this->getLockedSequenceNumber();
-        $oldThrottleTime = ($this->throttleTimerCalculator)($lockedSequenceNumber);
-        $newThrottleTime = ($this->throttleTimerCalculator)($lockedSequenceNumber + 1);
+        $lockedSequenceCount = $this->getLockedSequenceCount();
+        $oldThrottleTime = ($this->throttleTimerCalculator)($lockedSequenceCount);
+        $newThrottleTime = ($this->throttleTimerCalculator)($lockedSequenceCount + 1);
 
-        // the throttle time for the next lock will reset after the equivalent throttle time has passed after this unlocking
-        Cache::put($this->lockedSequenceKey, $lockedSequenceNumber + 1, $oldThrottleTime + $newThrottleTime);
+        // the increased throttle time will reset if no attempt is made during the same period
+        Cache::put($this->lockedSequenceCountKey, $lockedSequenceCount + 1, $oldThrottleTime + $newThrottleTime);
     }
 
     private function resetThrottleTime(): void {
-        Cache::forget($this->lockedSequenceKey);
+        Cache::forget($this->lockedSequenceCountKey);
     }
 
-    public function getLockedSequenceNumber(): int {
-        return Cache::get($this->lockedSequenceKey, 0);
+    public function getLockedSequenceCount(): int {
+        return Cache::get($this->lockedSequenceCountKey, 0);
     }
 
     public function tryAttempt(): bool {
-        $result = $this->limiter->hit(($this->throttleTimerCalculator)($this->getLockedSequenceNumber()));
+        $result = $this->limiter->hit(($this->throttleTimerCalculator)($this->getLockedSequenceCount()));
 
         if ($result === LimiterHitResult::HitAndLocked) {
-            $this->increaseThrottleTime();
+            return $this->increaseThrottleTime();
             return true;
         }
 
