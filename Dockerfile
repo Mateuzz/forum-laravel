@@ -37,7 +37,7 @@ RUN apk update && apk add \
 COPY composer.* .
 RUN composer install --no-dev --prefer-dist --no-interaction --no-scripts
 
-ENV CORS_URL=http://vue.localhost:80
+ENV CORS_URL=http://localhost
 ENV RUN_MIGRATIONS=false
 ENV RUN_DB_SEED=false
 
@@ -50,11 +50,9 @@ RUN chmod +x ./server.sh \
     && composer dump-autoload --optimize \
     && php artisan key:generate \
     && php artisan storage:link && \
-\
     apk cache clean && apk cache purge && rm -rf /var/cache/apk/*
 
 
 EXPOSE 80
 
 CMD ["./server.sh"]
-

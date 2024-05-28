@@ -5,7 +5,6 @@
 /public/storage
 /storage/*.key
 /storage/clockwork
-/storage/framework
 /storage/logs/*
 /storage/framework/cache/*
 /storage/framework/sessions/*
