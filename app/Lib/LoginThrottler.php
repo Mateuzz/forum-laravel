@@ -12,6 +12,7 @@ class ThrottleTimerCalculator {
 }
 
 class LoginThrottler {
+    public ThrottleTimerCalculator $throttleTimerCalculator = new ThrottleTimerCalculator;
     protected Limiter $limiter;
     protected string $key;
     private string $lockedSequenceKeyNumber;

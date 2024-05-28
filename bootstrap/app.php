@@ -2,9 +2,11 @@
 
 use App\Http\Middleware\SetUserIdentifierMiddleware;
 use App\Http\Middleware\UpdateLastActivityMiddleware;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
+use Laravel\Sanctum\Http\Middleware\AuthenticateSession;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(

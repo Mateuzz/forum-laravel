@@ -36,10 +36,10 @@ class CategoryController extends Controller {
                    p.slug as post_slug
             from categories c
             left join lateral (
-                    select id, title, slug from posts p
-                        where p.category_id = c.id
-                        order by id desc
-                        limit 1
+                select id, title, slug from posts p
+                    where p.category_id = c.id
+                    order by id desc
+                    limit 1
             ) p on true
             order by depth;
         ');

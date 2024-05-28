@@ -35,18 +35,16 @@ class PostAddView implements ShouldQueue
             )
             ->first();
 
-        $hasRecentVisit = false;
+        $wasViewedRecently = false;
 
         if (!$postUserView) {
-            $postUserView = new PostUserView([
-                'post_id' => $post->id
-            ]);
+            $postUserView = new PostUserView([ 'post_id' => $post->id ]);
             ++$post->unique_views_count;
         } else {
-            $hasRecentVisit = now()->diffInMinutes($postUserView->last_view_date, true) < self::MINUTES_BEFORE_ANOTHER_VISIT;
+            $wasViewedRecently = now()->diffInMinutes($postUserView->last_view_date, true) < self::MINUTES_BEFORE_ANOTHER_VISIT;
         }
 
-        if (!$hasRecentVisit) {
+        if (!$wasViewedRecently) {
             ++$post->views_count;
             ++$post->author->posts_views_received;
             $postUserView->last_view_date = now();
