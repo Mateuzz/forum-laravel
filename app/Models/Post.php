@@ -72,6 +72,8 @@ class Post extends Model {
         'body' => HtmlCleanInput::class,
     ];
 
+    protected $with = ['author', 'category'];
+
     const MAX_TITLE_SIZE = 100;
     const MAX_SLUG_SIZE = 100;
     const MAX_BODY_SIZE = 65535;

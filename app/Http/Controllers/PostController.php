@@ -45,7 +45,7 @@ class PostController extends Controller {
         if (!isset($validated['search']))
              $posts->order($validated['order'] ?? null);
 
-        return $posts->with(Post::getRelationsConstraints())
+        return $posts // ->with(Post::getRelationsConstraints())
                      ->paginate($pagesCount, Post::getVisibleFieldsForIndex());
     }
 
